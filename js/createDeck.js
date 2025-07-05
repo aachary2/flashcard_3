@@ -44,15 +44,16 @@ function viewCard() {
 
 
   createCards();
-
-  questionInput.value = "";
-  answerInput.value = "";
-
   confirms.style.display = "block";
   setTimeout(() => {
     confirms.style.display = "none";
   }, 2500);
   confirms.innerText = `Card added: “${question}”-> “${answer}”`;
+
+  questionInput.value = "";
+  answerInput.value = "";
+
+
 
 
 }
@@ -71,7 +72,6 @@ function createCards() {
   previousButton.style.display = "inline-block";
   firstQuestion.style.display = "inline-block";
   lastQuestion.style.display = "inline-block";
-  const orderOfCards = data.concat().reverse();
   buttons.style.display = "inline-block";
   view.style.display = "none";
   containers.innerHTML = "";
@@ -80,7 +80,7 @@ function createCards() {
 
 
 
-  orderOfCards.forEach((cardData, index) => {
+  data.concat().reverse().forEach((cardData, index) => {
     const flashcard = document.createElement("div");
     flashcard.classList.add("flashcard");
 
@@ -88,7 +88,7 @@ function createCards() {
     flashcard.innerHTML = `
       <div class="card-front"><h3>${cardData.question}</h3></div>
       <div class="hidden-div" style="display:none;"><h3>${cardData.answer}</h3></div>
-      <div class="card-number">Card ${index + 1} of ${orderOfCards.length} </div>
+      <div class="card-number">Card ${index + 1} of ${data.length} </div>
      
     `;
 
@@ -96,21 +96,19 @@ function createCards() {
     cards.push(flashcard);
     flashcard.style.display = "none";
   });
-
+  const the_answer = cards[currIndex].querySelector(".hidden-div");
   currIndex = 0;
   cards.forEach(card => card.style.display = "none");
 
   if (cards[currIndex]) {
     cards[currIndex].style.display = "block";
-
-    const answerDiv = cards[currIndex].querySelector(".hidden-div");
-    answerDiv.style.display = "none";
+    the_answer.style.display = "none";
 
     buttons.onclick = () => {
-      if ((answerDiv.style.display === "none")) {
-        answerDiv.style.display = "block"
+      if ((the_answer.style.display === "none")) {
+        the_answer.style.display = "block"
       } else {
-        answerDiv.style.display = "none"
+        the_answer.style.display = "none"
       }
     };
   }
@@ -120,20 +118,17 @@ function createCards() {
 
 function previous() {
   if (currIndex > 0) {
+    const the_answer = cards[currIndex].querySelector(".hidden-div");
     currIndex--;
     cards.forEach(card => card.style.display = "none");
     if (cards[currIndex]) {
       cards[currIndex].style.display = "block";
-
-      const answerDiv = cards[currIndex].querySelector(".hidden-div");
-      answerDiv.style.display = "none";
-
-
+      the_answer.style.display = "none";
       buttons.onclick = () => {
-        if ((answerDiv.style.display === "none")) {
-          answerDiv.style.display = "block"
+        if ((the_answer.style.display === "none")) {
+          the_answer.style.display = "block"
         } else {
-          answerDiv.style.display = "none"
+          the_answer.style.display = "none"
         }
       };
     }
@@ -143,20 +138,17 @@ previousButton.addEventListener('click', previous);
 
 function viewNextCard() {
   if (currIndex < data.length - 1) {
+    const the_answer = cards[currIndex].querySelector(".hidden-div");
     currIndex++;
     cards.forEach(card => card.style.display = "none");
     if (cards[currIndex]) {
       cards[currIndex].style.display = "block";
-
-      const answerDiv = cards[currIndex].querySelector(".hidden-div");
-      answerDiv.style.display = "none";
-
-
+      the_answer.style.display = "none";
       buttons.onclick = () => {
-        if ((answerDiv.style.display === "none")) {
-          answerDiv.style.display = "block"
+        if ((the_answer.style.display === "none")) {
+          the_answer.style.display = "block"
         } else {
-          answerDiv.style.display = "none"
+          the_answer.style.display = "none"
         }
       };
     }
@@ -178,18 +170,17 @@ if (data.length > 0) {
 lastQuestion.addEventListener('click', function () {
   currIndex = cards.length - 1;
   cards.forEach(card => card.style.display = "none");
+  const the_answer = cards[currIndex].querySelector(".hidden-div");
 
   if (cards[currIndex]) {
     cards[currIndex].style.display = "block";
-
-    const answerDiv = cards[currIndex].querySelector(".hidden-div");
-    answerDiv.style.display = "none";
+    the_answer.style.display = "none";
 
     buttons.onclick = () => {
-      if ((answerDiv.style.display === "none")) {
-        answerDiv.style.display = "block"
+      if ((the_answer.style.display === "none")) {
+        the_answer.style.display = "block"
       } else {
-        answerDiv.style.display = "none"
+        the_answer.style.display = "none"
       }
     };
   }
@@ -199,18 +190,17 @@ lastQuestion.addEventListener('click', function () {
 firstQuestion.addEventListener('click', function () {
   currIndex = 0;
   cards.forEach(card => card.style.display = "none");
+  const the_answer = cards[currIndex].querySelector(".hidden-div");
 
   if (cards[currIndex]) {
     cards[currIndex].style.display = "block";
-
-    const answerDiv = cards[currIndex].querySelector(".hidden-div");
-    answerDiv.style.display = "none";
+    the_answer.style.display = "none";
 
     buttons.onclick = () => {
-      if ((answerDiv.style.display === "none")) {
-        answerDiv.style.display = "block"
+      if ((the_answer.style.display === "none")) {
+        the_answer.style.display = "block"
       } else {
-        answerDiv.style.display = "none"
+        the_answer.style.display = "none"
       }
     };
   }
