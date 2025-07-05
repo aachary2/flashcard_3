@@ -39,7 +39,7 @@ function viewCard() {
     question,
     answer
   };
-  data.unshift(flashCard);
+  data.push(flashCard);
   sessionStorage.setItem("card", JSON.stringify(data));
 
 
@@ -52,7 +52,7 @@ function viewCard() {
   setTimeout(() => {
     confirms.style.display = "none";
   }, 2500);
-  confirms.innerText = `Card added: “${question}” → “${answer}”`;
+  confirms.innerText = `Card added: “${question}”-> “${answer}”`;
 
 
 }
@@ -71,7 +71,7 @@ function createCards() {
   previousButton.style.display = "inline-block";
   firstQuestion.style.display = "inline-block";
   lastQuestion.style.display = "inline-block";
-  const orderOfCards = [...data];
+  const orderOfCards = data.concat().reverse();
   buttons.style.display = "inline-block";
   view.style.display = "none";
   containers.innerHTML = "";
