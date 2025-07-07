@@ -119,10 +119,10 @@ function createCards() {
 
 function previous() {
   if (currIndex > 0) {
-    const the_answer = cards[currIndex].querySelector(".hidden-div");
     currIndex--;
     cards.forEach(card => card.style.display = "none");
     if (cards[currIndex]) {
+      const the_answer = cards[currIndex].querySelector(".hidden-div");
       cards[currIndex].style.display = "block";
       the_answer.style.display = "none";
       buttons.onclick = () => {
