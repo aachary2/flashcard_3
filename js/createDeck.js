@@ -96,11 +96,12 @@ function createCards() {
     cards.push(flashcard);
     flashcard.style.display = "none";
   });
-  const the_answer = cards[currIndex].querySelector(".hidden-div");
+
   currIndex = 0;
   cards.forEach(card => card.style.display = "none");
 
   if (cards[currIndex]) {
+    const the_answer = cards[currIndex].querySelector(".hidden-div");
     cards[currIndex].style.display = "block";
     the_answer.style.display = "none";
 
@@ -138,10 +139,11 @@ previousButton.addEventListener('click', previous);
 
 function viewNextCard() {
   if (currIndex < data.length - 1) {
-    const the_answer = cards[currIndex].querySelector(".hidden-div");
+
     currIndex++;
     cards.forEach(card => card.style.display = "none");
     if (cards[currIndex]) {
+      const the_answer = cards[currIndex].querySelector(".hidden-div");
       cards[currIndex].style.display = "block";
       the_answer.style.display = "none";
       buttons.onclick = () => {
