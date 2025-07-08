@@ -22,6 +22,7 @@ if (data) {
 
 let currIndex = 0;
 let cards = [];
+let id = 0;
 
 function viewCard() {
   const question = questionInput.value.trim();
@@ -37,23 +38,28 @@ function viewCard() {
 
   const flashCard = {
     question,
-    answer
+    answer,
+    id: id++
   };
   data.push(flashCard);
   sessionStorage.setItem("card", JSON.stringify(data));
 
 
   createCards();
-  confirms.style.display = "block";
-  setTimeout(() => {
-    confirms.style.display = "none";
-  }, 2500);
+  setConfrimationMessage();
   confirms.innerText = `Card added: “${question}”-> “${answer}”`;
-
   questionInput.value = "";
   answerInput.value = "";
 
 
+
+
+}
+function setConfrimationMessage() {
+  confirms.style.display = "block";
+  setTimeout(() => {
+    confirms.style.display = "none";
+  }, 2500);
 
 
 }
@@ -76,28 +82,31 @@ function createCards() {
   view.style.display = "none";
   containers.innerHTML = "";
   cards = [];
+  let showCounter = 1;
 
 
-
-
-  data.concat().reverse().forEach((cardData, index) => {
+  for (let index = data.length - 1; index >= 0; index--, showCounter++) {
+    const cardData = data[index];
     const flashcard = document.createElement("div");
     flashcard.classList.add("flashcard");
 
 
     flashcard.innerHTML = `
+    
+      <span class="material-icons" idx="${cardData.id}">delete </span>
       <div class="card-front"><h3>${cardData.question}</h3></div>
       <div class="hidden-div" style="display:none;"><h3>${cardData.answer}</h3></div>
-      <div class="card-number">Card ${index + 1} of ${data.length} </div>
+      <div class="card-number">Card ${showCounter} of ${data.length} </div>
      
     `;
 
     containers.appendChild(flashcard);
     cards.push(flashcard);
     flashcard.style.display = "none";
-  });
+  };
 
   currIndex = 0;
+
   cards.forEach(card => card.style.display = "none");
 
   if (cards[currIndex]) {
@@ -113,6 +122,25 @@ function createCards() {
       }
     };
   }
+  document.querySelectorAll(".material-icons").forEach(i => {
+    i.addEventListener("click", (e) => {
+      let discover = -1;
+      let i = 0;
+      for (; i < data.length; i++) {
+        if (data[i].id == parseInt(e.target.attributes["idx"].value)) {
+          discover = i;
+          break;
+        }
+      }
+      if (discover !== -1) {
+        data.splice(i, 1);
+        sessionStorage.setItem("card", JSON.stringify(data));
+
+        createCards();
+
+      }
+    });
+  });
 
 
 }
