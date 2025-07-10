@@ -122,8 +122,9 @@ function createCards() {
       }
     };
   }
-  document.querySelectorAll(".material-icons").forEach(i => {
-    i.addEventListener("click", (e) => {
+  const remove_btn = document.querySelectorAll(".material-icons");
+  for (let i = 0; i < remove_btn.length; i++) {
+    remove_btn[i].addEventListener("click", (e) => {
       let discover = -1;
       let i = 0;
       for (; i < data.length; i++) {
@@ -140,7 +141,8 @@ function createCards() {
 
       }
     });
-  });
+
+  };
 
 
 }
