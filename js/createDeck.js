@@ -12,8 +12,8 @@ const errorMessage = document.getElementById("error");
 const confirms = document.getElementById("confirm");
 const lastQuestion = document.querySelector('#last');
 const firstQuestion = document.querySelector('#first');
-let data = sessionStorage.getItem("card");
 
+let data = sessionStorage.getItem("card");
 if (data) {
   data = JSON.parse(data);
 } else {
@@ -34,6 +34,17 @@ function viewCard() {
     return;
   }
 
+  const isDuplicate = data.some(card =>
+    card.question.trim().toLowerCase() === question.toLowerCase() &&
+    card.answer.trim().toLowerCase() === answer.toLowerCase()
+  );
+
+  if (isDuplicate) {
+    errorMessage.style.display = "block";
+    errorMessage.innerText = "This card already exists.";
+    return;
+  }
+
   errorMessage.style.display = "none";
 
   const flashCard = {
@@ -41,34 +52,27 @@ function viewCard() {
     answer,
     id: id++
   };
+
   data.push(flashCard);
   sessionStorage.setItem("card", JSON.stringify(data));
 
-
   createCards();
-  setConfrimationMessage();
-  confirms.innerText = `Card added: “${question}”-> “${answer}”`;
+  setConfirmationMessage(`Card added: “${question}” → “${answer}”`);
   questionInput.value = "";
   answerInput.value = "";
-
-
-
-
 }
-function setConfrimationMessage() {
+
+function setConfirmationMessage(message) {
+  confirms.innerText = message;
   confirms.style.display = "block";
   setTimeout(() => {
     confirms.style.display = "none";
   }, 2500);
-
-
 }
-
 
 function create() {
   box_container.style.display = "flex";
   view.style.display = "flex";
-
 }
 
 function createCards() {
@@ -82,69 +86,53 @@ function createCards() {
   view.style.display = "none";
   containers.innerHTML = "";
   cards = [];
+
   let showCounter = 1;
-
-
   for (let index = data.length - 1; index >= 0; index--, showCounter++) {
     const cardData = data[index];
     const flashcard = document.createElement("div");
     flashcard.classList.add("flashcard");
 
-
     flashcard.innerHTML = `
-    
-      <span class="material-icons" idx="${cardData.id}">delete </span>
+      <span class="material-icons" idx="${cardData.id}">delete</span>
       <div class="card-front"><h3>${cardData.question}</h3></div>
       <div class="hidden-div" style="display:none;"><h3>${cardData.answer}</h3></div>
-      <div class="card-number">Card ${showCounter} of ${data.length} </div>
-     
+      <div class="card-number">Card ${showCounter} of ${data.length}</div>
     `;
 
     containers.appendChild(flashcard);
     cards.push(flashcard);
     flashcard.style.display = "none";
-  };
+  }
 
   currIndex = 0;
-
   cards.forEach(card => card.style.display = "none");
 
   if (cards[currIndex]) {
     const the_answer = cards[currIndex].querySelector(".hidden-div");
     cards[currIndex].style.display = "block";
     the_answer.style.display = "none";
-
     buttons.onclick = () => {
-      if ((the_answer.style.display === "none")) {
-        the_answer.style.display = "block"
-      } else {
-        the_answer.style.display = "none"
-      }
+      the_answer.style.display = (the_answer.style.display === "none") ? "block" : "none";
     };
   }
-  const remove_btn = document.querySelectorAll(".material-icons");
-  for (let i = 0; i < remove_btn.length; i++) {
-    remove_btn[i].addEventListener("click", (e) => {
-      let discover = -1;
-      let i = 0;
-      for (; i < data.length; i++) {
-        if (data[i].id == parseInt(e.target.attributes["idx"].value)) {
-          discover = i;
-          break;
-        }
-      }
-      if (discover !== -1) {
-        data.splice(i, 1);
+
+  const remove_btns = document.querySelectorAll(".material-icons");
+  for (let i = 0; i < remove_btns.length; i++) {
+    remove_btns[i].addEventListener("click", (e) => {
+      const targetId = parseInt(e.target.getAttribute("idx"));
+      const indexToRemove = data.findIndex(card => card.id === targetId);
+
+      if (indexToRemove !== -1) {
+        const deletedCard = data[indexToRemove];
+        data.splice(indexToRemove, 1);
         sessionStorage.setItem("card", JSON.stringify(data));
 
         createCards();
-
+        setConfirmationMessage(`Card deleted: “${deletedCard.question}” → “${deletedCard.answer}”`);
       }
     });
-
-  };
-
-
+  }
 }
 
 function previous() {
@@ -156,11 +144,7 @@ function previous() {
       cards[currIndex].style.display = "block";
       the_answer.style.display = "none";
       buttons.onclick = () => {
-        if ((the_answer.style.display === "none")) {
-          the_answer.style.display = "block"
-        } else {
-          the_answer.style.display = "none"
-        }
+        the_answer.style.display = (the_answer.style.display === "none") ? "block" : "none";
       };
     }
   }
@@ -168,8 +152,7 @@ function previous() {
 previousButton.addEventListener('click', previous);
 
 function viewNextCard() {
-  if (currIndex < data.length - 1) {
-
+  if (currIndex < cards.length - 1) {
     currIndex++;
     cards.forEach(card => card.style.display = "none");
     if (cards[currIndex]) {
@@ -177,28 +160,23 @@ function viewNextCard() {
       cards[currIndex].style.display = "block";
       the_answer.style.display = "none";
       buttons.onclick = () => {
-        if ((the_answer.style.display === "none")) {
-          the_answer.style.display = "block"
-        } else {
-          the_answer.style.display = "none"
-        }
+        the_answer.style.display = (the_answer.style.display === "none") ? "block" : "none";
       };
     }
   }
 }
 nextButton.addEventListener("click", viewNextCard);
-if (data.length > 0) {
 
+if (data.length > 0) {
   createCards();
 } else {
-
   containers.style.display = "none";
   box_container.style.display = "flex";
   view.style.display = "flex";
   firstQuestion.style.display = 'none';
   lastQuestion.style.display = 'none';
-
 }
+
 lastQuestion.addEventListener('click', function () {
   currIndex = cards.length - 1;
   cards.forEach(card => card.style.display = "none");
@@ -207,18 +185,12 @@ lastQuestion.addEventListener('click', function () {
   if (cards[currIndex]) {
     cards[currIndex].style.display = "block";
     the_answer.style.display = "none";
-
     buttons.onclick = () => {
-      if ((the_answer.style.display === "none")) {
-        the_answer.style.display = "block"
-      } else {
-        the_answer.style.display = "none"
-      }
+      the_answer.style.display = (the_answer.style.display === "none") ? "block" : "none";
     };
   }
-
-
 });
+
 firstQuestion.addEventListener('click', function () {
   currIndex = 0;
   cards.forEach(card => card.style.display = "none");
@@ -227,15 +199,8 @@ firstQuestion.addEventListener('click', function () {
   if (cards[currIndex]) {
     cards[currIndex].style.display = "block";
     the_answer.style.display = "none";
-
     buttons.onclick = () => {
-      if ((the_answer.style.display === "none")) {
-        the_answer.style.display = "block"
-      } else {
-        the_answer.style.display = "none"
-      }
+      the_answer.style.display = (the_answer.style.display === "none") ? "block" : "none";
     };
   }
-
-
 });
